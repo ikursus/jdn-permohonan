@@ -59,7 +59,9 @@ Route::get('/permohonan', function () {
 })->name('pemohon.permohonan.senarai');
 
 
-Route::get('/permohonan/baru', fn() => 'Halaman Permohonan baru')->name('pemohon.permohonan.baru');
+Route::get('/permohonan/baru', function() {
+    return view('pemohon.permohonan.template-baru');
+})->name('pemohon.permohonan.baru');
 Route::post('/permohonan/baru', fn() => 'Proses Permohonan baru')->name('pemohon.permohonan.proses');
 
 Route::get('/permohonan/{idpermohonan?}', function ($idpermohonan = null) {
@@ -73,10 +75,24 @@ Route::get('/permohonan/{idpermohonan?}', function ($idpermohonan = null) {
 
 })->name('pemohon.permohonan.detail');
 
-Route::get('/helpdesk', fn() => 'Halaman Senarai tiket helpdesk')->name('pemohon.helpdesk');
-Route::get('/helpdesk/baru', fn() => 'Halaman Tiket baru <a href="' . route('helpdesk') . '">Kembali ke Senarai</a>')->name('pemohon.helpdesk.baru');
+Route::get('/helpdesk', function() {
+    return view('pemohon.helpdesk.template-senarai');
+})->name('pemohon.helpdesk');
+
+// Alias untuk konsistensi nama route
+Route::get('/helpdesk', function() {
+    return view('pemohon.helpdesk.template-senarai');
+})->name('pemohon.helpdesk.senarai');
+Route::get('/helpdesk/baru', function() {
+    return view('pemohon.helpdesk.template-baru');
+})->name('pemohon.helpdesk.baru');
 Route::post('/helpdesk/baru', fn() => 'Proses Tiket baru')->name('pemohon.helpdesk.proses');
-Route::get('/helpdesk/{idtiket}', fn($idtiket) => "Halaman Detail tiket {$idtiket}")->name('pemohon.helpdesk.detail');
+Route::get('/helpdesk/{idtiket}', function($idtiket) {
+    return view('pemohon.helpdesk.template-detail', compact('idtiket'));
+})->name('pemohon.helpdesk.detail');
+Route::post('/helpdesk/{idtiket}/reply', function($idtiket) {
+    return 'Proses Reply Tiket ' . $idtiket;
+})->name('pemohon.helpdesk.reply');
 
 // Halaman admin
 // Route::prefix('admin')->group(function () {
@@ -105,12 +121,20 @@ Route::get('/helpdesk/{idtiket}', fn($idtiket) => "Halaman Detail tiket {$idtike
 
 Route::group([
     'prefix' => 'admin', 
-    'middleware' => 'auth'
+    //'middleware' => 'auth'
 ], function () {
-    Route::get('/dashboard', fn() => 'Halaman Dashboard Admin');
-    Route::get('/pemohon', fn() => 'Halaman Senarai Pemohon');
-    Route::get('/permohonan', fn() => 'Halaman Senarai Permohonan Admin');
-    Route::get('/helpdesk', fn() => 'Halaman Senarai Helpdesk Admin');
+    Route::get('/dashboard', function() {
+        return view('admin.template-dashboard');
+    });
+    Route::get('/pemohon', function() {
+        return view('admin.template-pemohon');
+    });
+    Route::get('/permohonan', function() {
+        return view('admin.template-permohonan');
+    });
+    Route::get('/helpdesk', function() {
+        return view('admin.template-helpdesk');
+    });
 });
 
 // Test
