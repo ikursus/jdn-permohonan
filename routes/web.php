@@ -1,18 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PemohonController;
+use App\Http\Controllers\HelpdeskController;
+use App\Http\Controllers\PermohonanController;
+use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Authentication\RegisterController;
-use App\Http\Controllers\Authentication\AuthController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PemohonController;
-use App\Http\Controllers\PermohonanController;
-use App\Http\Controllers\HelpdeskController;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 // Authentication Routes (Guest only)
 Route::middleware('guest')->group(function () {
@@ -35,13 +34,16 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
     Route::get('/dashboard', [PemohonController::class, 'dashboard'])->name('pemohon.dashboard');
     
     // Permohonan Routes
-    Route::get('/permohonan', [PermohonanController::class, 'index'])->name('pemohon.permohonan.senarai');
-    Route::get('/permohonan/baru', [PermohonanController::class, 'create'])->name('pemohon.permohonan.baru');
-    Route::post('/permohonan/baru', [PermohonanController::class, 'store'])->name('pemohon.permohonan.store');
-    Route::get('/permohonan/{id}/edit', [PermohonanController::class, 'edit'])->name('pemohon.permohonan.edit');
-    Route::put('/permohonan/{id}', [PermohonanController::class, 'update'])->name('pemohon.permohonan.update');
-    Route::get('/permohonan/{id}', [PermohonanController::class, 'show'])->name('pemohon.permohonan.detail');
-    Route::delete('/permohonan/{id}', [PermohonanController::class, 'destroy'])->name('pemohon.permohonan.delete');
+    // Route::get('/permohonan', [PermohonanController::class, 'index'])->name('pemohon.permohonan.senarai');
+    // Route::get('/permohonan/baru', [PermohonanController::class, 'create'])->name('pemohon.permohonan.baru');
+    // Route::post('/permohonan/baru', [PermohonanController::class, 'store'])->name('pemohon.permohonan.store');
+    // Route::get('/permohonan/{id}/edit', [PermohonanController::class, 'edit'])->name('pemohon.permohonan.edit');
+    // Route::put('/permohonan/{id}', [PermohonanController::class, 'update'])->name('pemohon.permohonan.update');
+    // Route::get('/permohonan/{id}', [PermohonanController::class, 'show'])->name('pemohon.permohonan.detail');
+    // Route::delete('/permohonan/{id}', [PermohonanController::class, 'destroy'])->name('pemohon.permohonan.delete');
+    
+    Route::get('permohonan/search', [PermohonanController::class, 'search']);
+    Route::resource('permohonan', PermohonanController::class);
     
     // Helpdesk Routes
     Route::get('/helpdesk', [HelpdeskController::class, 'index'])->name('pemohon.helpdesk.senarai');

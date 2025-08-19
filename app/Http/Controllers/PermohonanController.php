@@ -28,8 +28,12 @@ class PermohonanController extends Controller
     /**
      * Show form for creating new permohonan
      */
-    public function create()
+    public function create(Request $request)
     {
+        $data = $request->all();
+
+        dd($data);
+
         return view('pemohon.permohonan.template-baru');
     }
 
@@ -163,7 +167,7 @@ class PermohonanController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Permohonan $permohonan)
     {
         // Validate ID
         if (!is_numeric($id) || $id <= 0) {
@@ -214,5 +218,10 @@ class PermohonanController extends Controller
                 ->with('error', 'Ralat berlaku semasa mengemaskini permohonan. Sila cuba lagi.')
                 ->withInput();
         }
+    }
+
+    public function search()
+    {
+        return 'test search';
     }
 }
