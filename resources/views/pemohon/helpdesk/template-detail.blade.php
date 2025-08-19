@@ -385,11 +385,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="bi bi-reply me-2"></i>Balas Tiket #{{ $tiket['id'] }}
+                    <i class="bi bi-reply me-2"></i>Balas Tiket #{{ $idtiket }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="reply-form" method="POST" action="{{ route('pemohon.helpdesk.reply', $tiket['id']) }}" enctype="multipart/form-data">
+            <form id="reply-form" method="POST" action="{{ route('pemohon.helpdesk.reply', $idtiket) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

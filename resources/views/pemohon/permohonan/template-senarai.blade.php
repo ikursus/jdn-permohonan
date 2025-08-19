@@ -171,17 +171,17 @@ Senarai Permohonan
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                        <a href="{{ route('pemohon.permohonan.detail', $item['id']) }}" class="btn btn-outline-primary btn-sm flex-fill">
                             <i class="fas fa-eye me-1"></i>Lihat
                         </a>
                         @if(($item['status'] ?? 'pending') !== 'approved')
-                        <a href="#" class="btn btn-outline-warning btn-sm flex-fill">
+                        <a href="{{ route('pemohon.permohonan.edit', $item['id']) }}" class="btn btn-outline-warning btn-sm flex-fill">
                             <i class="fas fa-edit me-1"></i>Edit
                         </a>
                         @endif
                         <button type="button" class="btn btn-outline-danger btn-sm" 
                                 onclick="confirmDelete('{{ $item['id'] }}')" title="Padam">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-trash me-1"></i>Padam
                         </button>
                         <form id="delete-form-{{ $item['id'] }}" 
                               action="#" 

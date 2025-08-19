@@ -300,14 +300,21 @@
             <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 1rem;">
             
             <div class="nav-item">
-                <a href="" class="nav-link {{ request()->routeIs('pemohon.bantuan') ? 'active' : '' }}">
+                <a href="{{ route('pemohon.helpdesk.senarai') }}" class="nav-link {{ request()->routeIs('pemohon.helpdesk.*') ? 'active' : '' }}">
+                    <i class="bi bi-headset"></i>
+                    Helpdesk
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link {{ request()->routeIs('pemohon.bantuan') ? 'active' : '' }}">
                     <i class="bi bi-question-circle"></i>
                     Bantuan
                 </a>
             </div>
             
             <div class="nav-item">
-                <form action="" method="POST" style="margin: 0;">
+                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf
                     <button type="submit" class="nav-link" style="background: none; border: none; width: 100%; text-align: left;">
                         <i class="bi bi-box-arrow-right"></i>
@@ -357,7 +364,7 @@
                         <li><a class="dropdown-item" href=""><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form action="" method="POST" style="margin: 0;">
+                            <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                                 @csrf
                                 <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Keluar</button>
                             </form>

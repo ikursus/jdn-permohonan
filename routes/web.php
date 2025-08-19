@@ -23,6 +23,12 @@ Route::get('logout', function() {
     return redirect()->route('login');
 })->name('logout');
 
+Route::post('logout', function() {
+    return redirect()->route('login');
+})->name('logout');
+
+Route::post('/contact', fn() => 'Proses Contact')->name('contact.store');
+
 // Halaman pemohon
 Route::get('/dashboard', function () {
     return view('pemohon.template-dashboard');
@@ -64,16 +70,17 @@ Route::get('/permohonan/baru', function() {
 })->name('pemohon.permohonan.baru');
 Route::post('/permohonan/baru', fn() => 'Proses Permohonan baru')->name('pemohon.permohonan.proses');
 
-Route::get('/permohonan/{idpermohonan?}', function ($idpermohonan = null) {
-
-    if (is_null($idpermohonan)) {
-        return 'Ini Halaman Senarai';
-    }
-
-    // return "Halaman Detail Permohonan {$idpermohonan}";
-    return redirect()->route('helpdesk');
-
+Route::get('/permohonan/{id}', function ($id) {
+    return view('pemohon.permohonan.template-detail', compact('id'));
 })->name('pemohon.permohonan.detail');
+
+Route::get('/permohonan/{id}/edit', function ($id) {
+    return view('pemohon.permohonan.template-edit', compact('id'));
+})->name('pemohon.permohonan.edit');
+
+Route::put('/permohonan/{id}', function ($id) {
+    return 'Kemaskini Permohonan ' . $id;
+})->name('pemohon.permohonan.update');
 
 Route::get('/helpdesk', function() {
     return view('pemohon.helpdesk.template-senarai');
@@ -87,6 +94,7 @@ Route::get('/helpdesk/baru', function() {
     return view('pemohon.helpdesk.template-baru');
 })->name('pemohon.helpdesk.baru');
 Route::post('/helpdesk/baru', fn() => 'Proses Tiket baru')->name('pemohon.helpdesk.proses');
+Route::post('/helpdesk/baru', fn() => 'Proses Tiket baru')->name('pemohon.helpdesk.store');
 Route::get('/helpdesk/{idtiket}', function($idtiket) {
     return view('pemohon.helpdesk.template-detail', compact('idtiket'));
 })->name('pemohon.helpdesk.detail');
@@ -125,16 +133,16 @@ Route::group([
 ], function () {
     Route::get('/dashboard', function() {
         return view('admin.template-dashboard');
-    });
+    })->name('admin.dashboard');
     Route::get('/pemohon', function() {
         return view('admin.template-pemohon');
-    });
+    })->name('admin.pemohon');
     Route::get('/permohonan', function() {
         return view('admin.template-permohonan');
-    });
+    })->name('admin.permohonan');
     Route::get('/helpdesk', function() {
         return view('admin.template-helpdesk');
-    });
+    })->name('admin.helpdesk');
 });
 
 // Test
