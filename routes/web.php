@@ -2,147 +2,64 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Authentication\LoginController;
+use App\Http\Controllers\Authentication\RegisterController;
+use App\Http\Controllers\Authentication\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PemohonController;
+use App\Http\Controllers\PermohonanController;
+use App\Http\Controllers\HelpdeskController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/login', function () {
-    return view('authentication.template-login');
-})->name('login');
+// Authentication Routes (Guest only)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'borangLogin'])->name('login');
+    Route::post('/login', [LoginController::class, 'prosesBorangLogin'])->name('login.proses');
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.proses');
+});
 
-Route::post('/login', fn() => 'Proses Login')->name('login.proses');
+// Logout Routes (Authenticated users only)
+Route::middleware('auth')->group(function () {
+    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout.post');
+});
 
-Route::get('/pendaftaran', function() {
-    return view('authentication.register');
-})->name('register');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::post('/register', fn() => 'Proses Register')->name('register.proses');
-
-Route::get('logout', function() {
-    return redirect()->route('login');
-})->name('logout');
-
-Route::post('logout', function() {
-    return redirect()->route('login');
-})->name('logout');
-
-Route::post('/contact', fn() => 'Proses Contact')->name('contact.store');
-
-// Halaman pemohon
-Route::get('/dashboard', function () {
-    return view('pemohon.template-dashboard');
-})->name('pemohon.dashboard');
-
-
-Route::get('/permohonan', function () {
-
-    $pageTitle = 'Senarai Permohonan Pekerja';
-
-    $senaraiPermohonan = [
-        ['id' => 1, 'nama' => 'Ali', 'no_kp' => '808080808080'],
-        ['id' => 2, 'nama' => 'Ahmad', 'no_kp' => '808080808080'],
-        ['id' => 3, 'nama' => '<strong>Siti<strong>', 'no_kp' => '<strong>test</strong>'],
-        ['id' => 4, 'nama' => 'Upin', 'no_kp' => '808080808080'],
-        ['id' => 5, 'nama' => 'Ah Leong', 'no_kp' => '808080808080'],
-
-    ];
-
-    // Cara 1 passing data / attach data ke template
-    // return view('permohonan.template-senarai')
-    // ->with('senaraiPermohonan', $senaraiPermohonan)
-    // ->with('title', $pageTitle);
-
-    // // Cara 2 passing data / attach data ke template
-    // return view('permohonan.template-senarai', [
-    //     'senaraiPermohonan' => $senaraiPermohonan, 
-    //     'title' => $pageTitle
-    // ]);
-
-    // Cara 3 passing data / attach data ke template
-    return view('pemohon.permohonan.template-senarai', compact('senaraiPermohonan', 'pageTitle'));
-
-})->name('pemohon.permohonan.senarai');
-
-
-Route::get('/permohonan/baru', function() {
-    return view('pemohon.permohonan.template-baru');
-})->name('pemohon.permohonan.baru');
-Route::post('/permohonan/baru', fn() => 'Proses Permohonan baru')->name('pemohon.permohonan.proses');
-
-Route::get('/permohonan/{id}', function ($id) {
-    return view('pemohon.permohonan.template-detail', compact('id'));
-})->name('pemohon.permohonan.detail');
-
-Route::get('/permohonan/{id}/edit', function ($id) {
-    return view('pemohon.permohonan.template-edit', compact('id'));
-})->name('pemohon.permohonan.edit');
-
-Route::put('/permohonan/{id}', function ($id) {
-    return 'Kemaskini Permohonan ' . $id;
-})->name('pemohon.permohonan.update');
-
-Route::get('/helpdesk', function() {
-    return view('pemohon.helpdesk.template-senarai');
-})->name('pemohon.helpdesk');
-
-// Alias untuk konsistensi nama route
-Route::get('/helpdesk', function() {
-    return view('pemohon.helpdesk.template-senarai');
-})->name('pemohon.helpdesk.senarai');
-Route::get('/helpdesk/baru', function() {
-    return view('pemohon.helpdesk.template-baru');
-})->name('pemohon.helpdesk.baru');
-Route::post('/helpdesk/baru', fn() => 'Proses Tiket baru')->name('pemohon.helpdesk.proses');
-Route::post('/helpdesk/baru', fn() => 'Proses Tiket baru')->name('pemohon.helpdesk.store');
-Route::get('/helpdesk/{idtiket}', function($idtiket) {
-    return view('pemohon.helpdesk.template-detail', compact('idtiket'));
-})->name('pemohon.helpdesk.detail');
-Route::post('/helpdesk/{idtiket}/reply', function($idtiket) {
-    return 'Proses Reply Tiket ' . $idtiket;
-})->name('pemohon.helpdesk.reply');
-
-// Halaman admin
-// Route::prefix('admin')->group(function () {
-//     Route::get('/dashboard', fn() => 'Halaman Dashboard Admin');
-//     Route::get('/pemohon', fn() => 'Halaman Senarai Pemohon');
-//     Route::get('/permohonan', fn() => 'Halaman Senarai Permohonan Admin');
-//     Route::get('/helpdesk', fn() => 'Halaman Senarai Helpdesk Admin');
+// Pemohon Routes (Authenticated users only)
+// Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [PemohonController::class, 'dashboard'])->name('pemohon.dashboard');
+    
+    // Permohonan Routes
+    Route::get('/permohonan', [PermohonanController::class, 'index'])->name('pemohon.permohonan.senarai');
+    Route::get('/permohonan/baru', [PermohonanController::class, 'create'])->name('pemohon.permohonan.baru');
+    Route::post('/permohonan/baru', [PermohonanController::class, 'store'])->name('pemohon.permohonan.store');
+    Route::get('/permohonan/{id}/edit', [PermohonanController::class, 'edit'])->name('pemohon.permohonan.edit');
+    Route::put('/permohonan/{id}', [PermohonanController::class, 'update'])->name('pemohon.permohonan.update');
+    Route::get('/permohonan/{id}', [PermohonanController::class, 'show'])->name('pemohon.permohonan.detail');
+    Route::delete('/permohonan/{id}', [PermohonanController::class, 'destroy'])->name('pemohon.permohonan.delete');
+    
+    // Helpdesk Routes
+    Route::get('/helpdesk', [HelpdeskController::class, 'index'])->name('pemohon.helpdesk.senarai');
+    Route::get('/helpdesk/baru', [HelpdeskController::class, 'create'])->name('pemohon.helpdesk.baru');
+    Route::post('/helpdesk/baru', [HelpdeskController::class, 'store'])->name('pemohon.helpdesk.store');
+    Route::get('/helpdesk/{id}', [HelpdeskController::class, 'show'])->name('pemohon.helpdesk.detail');
+    Route::post('/helpdesk/{id}/reply', [HelpdeskController::class, 'reply'])->name('pemohon.helpdesk.reply');
 // });
 
-// Route::get('/admin/dashboard', fn() => 'Halaman Dashboard Admin')->middleware('auth');
-// Route::get('/admin/pemohon', fn() => 'Halaman Senarai Pemohon')->middleware('auth');
-// Route::get('/admin/permohonan', fn() => 'Halaman Senarai Permohonan Admin')->middleware('auth');
-// Route::get('/admin/helpdesk', fn() => 'Halaman Senarai Helpdesk Admin')->middleware('auth');
-
-
-// Route::middleware('auth')->group(function() {
-
-//     Route::prefix('admin')->group(function () {
-
-//         Route::get('/dashboard', fn() => 'Halaman Dashboard Admin');
-//         Route::get('/pemohon', fn() => 'Halaman Senarai Pemohon');
-//         Route::get('/permohonan', fn() => 'Halaman Senarai Permohonan Admin');
-
-//     });
-// });
-
+// Admin Routes (Authenticated admin users only)
 Route::group([
-    'prefix' => 'admin', 
-    //'middleware' => 'auth'
+    'prefix' => 'admin',
+    //'middleware' => ['auth', 'admin']
 ], function () {
-    Route::get('/dashboard', function() {
-        return view('admin.template-dashboard');
-    })->name('admin.dashboard');
-    Route::get('/pemohon', function() {
-        return view('admin.template-pemohon');
-    })->name('admin.pemohon');
-    Route::get('/permohonan', function() {
-        return view('admin.template-permohonan');
-    })->name('admin.permohonan');
-    Route::get('/helpdesk', function() {
-        return view('admin.template-helpdesk');
-    })->name('admin.helpdesk');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/pemohon', [AdminController::class, 'pemohon'])->name('admin.pemohon');
+    Route::get('/permohonan', [AdminController::class, 'permohonan'])->name('admin.permohonan');
+    Route::get('/helpdesk', [AdminController::class, 'helpdesk'])->name('admin.helpdesk');
 });
 
 // Test
