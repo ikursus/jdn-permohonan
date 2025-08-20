@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PemohonController;
@@ -30,7 +32,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Pemohon Routes (Authenticated users only)
-// Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [PemohonController::class, 'dashboard'])->name('pemohon.dashboard');
     
     // Permohonan Routes
@@ -51,14 +53,15 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
     Route::post('/helpdesk/baru', [HelpdeskController::class, 'store'])->name('pemohon.helpdesk.store');
     Route::get('/helpdesk/{id}', [HelpdeskController::class, 'show'])->name('pemohon.helpdesk.detail');
     Route::post('/helpdesk/{id}/reply', [HelpdeskController::class, 'reply'])->name('pemohon.helpdesk.reply');
-// });
+});
 
 // Admin Routes (Authenticated admin users only)
 Route::group([
     'prefix' => 'admin',
-    //'middleware' => ['auth', 'admin']
+    'middleware' => ['auth']
 ], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::resource('/users', UserController::class);
     Route::get('/pemohon', [AdminController::class, 'pemohon'])->name('admin.pemohon');
     Route::get('/permohonan', [AdminController::class, 'permohonan'])->name('admin.permohonan');
     Route::get('/helpdesk', [AdminController::class, 'helpdesk'])->name('admin.helpdesk');

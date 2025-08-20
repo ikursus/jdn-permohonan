@@ -270,13 +270,13 @@
                 </div>
                 
                 <div class="form-floating">
-                    <input type="text" class="form-control @error('no_telefon') is-invalid @enderror" 
-                           id="no_telefon" name="no_telefon" value="{{ old('no_telefon') }}" 
+                    <input type="text" class="form-control @error('phone') is-invalid @enderror" 
+                           id="phone" name="phone" value="{{ old('phone') }}" 
                            placeholder="01X-XXXXXXX" required>
-                    <label for="no_telefon">
+                    <label for="phone">
                         <i class="bi bi-telephone me-2"></i>No. Telefon
                     </label>
-                    @error('no_telefon')
+                    @error('phone')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -302,7 +302,7 @@
                 </div>
                 
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                    <input type="checkbox" class="form-check-input" id="terms" name="terms" {{ old('terms') ? 'checked' : '' }} required>
                     <label class="form-check-label" for="terms">
                         Saya bersetuju dengan <a href="#" target="_blank">Terma dan Syarat</a> yang ditetapkan
                     </label>

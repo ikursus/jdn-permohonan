@@ -216,18 +216,7 @@
                 <p class="login-subtitle">Sila log masuk ke akaun anda</p>
             </div>
 
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <div>
-                            @foreach ($errors->all() as $error)
-                                <div>{{ $error }}</div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
+            @include('alert')
 
             <form method="POST" action="">
                 @csrf

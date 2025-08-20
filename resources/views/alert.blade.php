@@ -1,3 +1,16 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <div>
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+@endif
+
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert" style="border: none; border-radius: 0.75rem; background-color: #d1fae5; color: #065f46; border-left: 4px solid #10b981;">
         <i class="bi bi-check-circle-fill me-3 fs-5"></i>
