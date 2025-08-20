@@ -29,9 +29,9 @@ class RegisterController extends Controller
         // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            //'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'no_kp' => 'required|string|size:12|unique:users',
+            //'no_kp' => 'required|string|size:12|unique:users',
             'no_telefon' => 'required|string|max:15',
         ], [
             'name.required' => 'Nama penuh wajib diisi',
@@ -52,6 +52,9 @@ class RegisterController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+
+        // Dump and die
+        dd($request->all());
 
         try {
             // Create new user

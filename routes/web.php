@@ -34,16 +34,16 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
     Route::get('/dashboard', [PemohonController::class, 'dashboard'])->name('pemohon.dashboard');
     
     // Permohonan Routes
-    // Route::get('/permohonan', [PermohonanController::class, 'index'])->name('pemohon.permohonan.senarai');
-    // Route::get('/permohonan/baru', [PermohonanController::class, 'create'])->name('pemohon.permohonan.baru');
-    // Route::post('/permohonan/baru', [PermohonanController::class, 'store'])->name('pemohon.permohonan.store');
-    // Route::get('/permohonan/{id}/edit', [PermohonanController::class, 'edit'])->name('pemohon.permohonan.edit');
-    // Route::put('/permohonan/{id}', [PermohonanController::class, 'update'])->name('pemohon.permohonan.update');
-    // Route::get('/permohonan/{id}', [PermohonanController::class, 'show'])->name('pemohon.permohonan.detail');
-    // Route::delete('/permohonan/{id}', [PermohonanController::class, 'destroy'])->name('pemohon.permohonan.delete');
+    Route::get('/permohonan', [PermohonanController::class, 'index'])->name('pemohon.permohonan.senarai');
+    Route::get('/permohonan/baru', [PermohonanController::class, 'create'])->name('pemohon.permohonan.baru');
+    Route::post('/permohonan/baru', [PermohonanController::class, 'store'])->name('pemohon.permohonan.store');
+    Route::get('/permohonan/{id}/edit', [PermohonanController::class, 'edit'])->name('pemohon.permohonan.edit');
+    Route::put('/permohonan/{id}', [PermohonanController::class, 'update'])->name('pemohon.permohonan.update');
+    Route::get('/permohonan/{id}', [PermohonanController::class, 'show'])->name('pemohon.permohonan.detail');
+    Route::delete('/permohonan/{id}', [PermohonanController::class, 'destroy'])->name('pemohon.permohonan.delete');
     
     Route::get('permohonan/search', [PermohonanController::class, 'search']);
-    Route::resource('permohonan', PermohonanController::class);
+    //Route::resource('permohonan', PermohonanController::class);
     
     // Helpdesk Routes
     Route::get('/helpdesk', [HelpdeskController::class, 'index'])->name('pemohon.helpdesk.senarai');
