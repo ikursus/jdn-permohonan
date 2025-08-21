@@ -16,7 +16,7 @@
                 <h5 class="card-title">Maklumat Permohonan</h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('pemohon.permohonan.proses') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('pemohon.permohonan.store') }}" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="row">
@@ -39,36 +39,27 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="tarikh_diperlukan" class="form-label">Tarikh Diperlukan <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control @error('tarikh_diperlukan') is-invalid @enderror" 
-                                       id="tarikh_diperlukan" name="tarikh_diperlukan" 
-                                       value="{{ old('tarikh_diperlukan') }}" required>
-                                @error('tarikh_diperlukan')
+                                <label for="wilayah_asal" class="form-label">Wilayah Asal <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('wilayah_asal') is-invalid @enderror" 
+                                       id="wilayah_asal" name="wilayah_asal" 
+                                       value="{{ old('wilayah_asal') }}" 
+                                       placeholder="Masukkan wilayah asal" required>
+                                @error('wilayah_asal')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="tujuan" class="form-label">Tujuan Permohonan <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('tujuan') is-invalid @enderror" 
-                                  id="tujuan" name="tujuan" rows="3" 
-                                  placeholder="Nyatakan tujuan permohonan anda..." required>{{ old('tujuan') }}</textarea>
-                        @error('tujuan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="nama_syarikat" class="form-label">Nama Syarikat/Majikan</label>
-                                <input type="text" class="form-control @error('nama_syarikat') is-invalid @enderror" 
-                                       id="nama_syarikat" name="nama_syarikat" 
-                                       value="{{ old('nama_syarikat') }}" 
-                                       placeholder="Nama syarikat atau majikan">
-                                @error('nama_syarikat')
+                                <label for="wilayah_ibu_negara" class="form-label">Wilayah Ibu Negara <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('wilayah_ibu_negara') is-invalid @enderror" 
+                                       id="wilayah_ibu_negara" name="wilayah_ibu_negara" 
+                                       value="{{ old('wilayah_ibu_negara') }}" 
+                                       placeholder="Masukkan wilayah ibu negara" required>
+                                @error('wilayah_ibu_negara')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -76,12 +67,37 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="jawatan" class="form-label">Jawatan</label>
-                                <input type="text" class="form-control @error('jawatan') is-invalid @enderror" 
-                                       id="jawatan" name="jawatan" 
-                                       value="{{ old('jawatan') }}" 
-                                       placeholder="Jawatan yang dipohon">
-                                @error('jawatan')
+                                <label for="tarikh_lapor_diri" class="form-label">Tarikh Lapor Diri <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control @error('tarikh_lapor_diri') is-invalid @enderror" 
+                                       id="tarikh_lapor_diri" name="tarikh_lapor_diri" 
+                                       value="{{ old('tarikh_lapor_diri') }}" required>
+                                @error('tarikh_lapor_diri')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tarikh_terakhir_kemudahan" class="form-label">Tarikh Terakhir Kemudahan</label>
+                                <input type="date" class="form-control @error('tarikh_terakhir_kemudahan') is-invalid @enderror" 
+                                       id="tarikh_terakhir_kemudahan" name="tarikh_terakhir_kemudahan" 
+                                       value="{{ old('tarikh_terakhir_kemudahan') }}">
+                                @error('tarikh_terakhir_kemudahan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tarikh_kemudahan_diperlukan" class="form-label">Tarikh Kemudahan Diperlukan</label>
+                                <input type="date" class="form-control @error('tarikh_kemudahan_diperlukan') is-invalid @enderror" 
+                                       id="tarikh_kemudahan_diperlukan" name="tarikh_kemudahan_diperlukan" 
+                                       value="{{ old('tarikh_kemudahan_diperlukan') }}">
+                                @error('tarikh_kemudahan_diperlukan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -89,32 +105,35 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="alamat_syarikat" class="form-label">Alamat Syarikat/Majikan</label>
-                        <textarea class="form-control @error('alamat_syarikat') is-invalid @enderror" 
-                                  id="alamat_syarikat" name="alamat_syarikat" rows="2" 
-                                  placeholder="Alamat lengkap syarikat atau majikan">{{ old('alamat_syarikat') }}</textarea>
-                        @error('alamat_syarikat')
+                        <label for="pengakuan" class="form-label">Pengakuan <span class="text-danger">*</span></label>
+                        <textarea class="form-control @error('pengakuan') is-invalid @enderror" 
+                                  id="pengakuan" name="pengakuan" rows="3" 
+                                  placeholder="Nyatakan pengakuan anda..." required>{{ old('pengakuan') }}</textarea>
+                        @error('pengakuan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     
                     <div class="mb-3">
-                        <label for="dokumen" class="form-label">Muat Naik Dokumen Sokongan</label>
-                        <input type="file" class="form-control @error('dokumen') is-invalid @enderror" 
-                               id="dokumen" name="dokumen[]" multiple 
-                               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                        <div class="form-text">Format yang diterima: PDF, JPG, PNG, DOC, DOCX (Maksimum 5MB setiap fail)</div>
-                        @error('dokumen')
+                        <label for="pengakuan_tarikh" class="form-label">Tarikh Pengakuan <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control @error('pengakuan_tarikh') is-invalid @enderror" 
+                               id="pengakuan_tarikh" name="pengakuan_tarikh" 
+                               value="{{ old('pengakuan_tarikh') }}" required>
+                        @error('pengakuan_tarikh')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     
                     <div class="mb-3">
-                        <label for="catatan" class="form-label">Catatan Tambahan</label>
-                        <textarea class="form-control @error('catatan') is-invalid @enderror" 
-                                  id="catatan" name="catatan" rows="3" 
-                                  placeholder="Sebarang catatan atau maklumat tambahan...">{{ old('catatan') }}</textarea>
-                        @error('catatan')
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select @error('status') is-invalid @enderror" 
+                                id="status" name="status">
+                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="diproses" {{ old('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                            <option value="lulus" {{ old('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
+                            <option value="ditolak" {{ old('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                        @error('status')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

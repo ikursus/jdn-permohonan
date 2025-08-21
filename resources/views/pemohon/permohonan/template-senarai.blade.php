@@ -61,10 +61,10 @@ Senarai Permohonan
         <div class="col-md-4">
             <select class="form-select" id="statusFilter">
                 <option value="">Semua Status</option>
-                <option value="pending">Dalam Proses</option>
-                <option value="approved">Diluluskan</option>
-                <option value="rejected">Ditolak</option>
-                <option value="draft">Draf</option>
+                <option value="pending">Pending</option>
+                <option value="diproses">Diproses</option>
+                <option value="lulus">Lulus</option>
+                <option value="ditolak">Ditolak</option>
             </select>
         </div>
     </div>
@@ -100,8 +100,8 @@ Senarai Permohonan
                 <div class="text-success mb-2">
                     <i class="fas fa-check-circle fa-2x"></i>
                 </div>
-                <h5 class="card-title mb-1">{{ collect($senaraiPermohonan ?? [])->where('status', 'approved')->count() }}</h5>
-                <p class="card-text text-muted small">Diluluskan</p>
+                <h5 class="card-title mb-1">{{ collect($senaraiPermohonan ?? [])->where('status', 'lulus')->count() }}</h5>
+                <p class="card-text text-muted small">Lulus</p>
             </div>
         </div>
     </div>
@@ -111,7 +111,7 @@ Senarai Permohonan
                 <div class="text-danger mb-2">
                     <i class="fas fa-times-circle fa-2x"></i>
                 </div>
-                <h5 class="card-title mb-1">{{ collect($senaraiPermohonan ?? [])->where('status', 'rejected')->count() }}</h5>
+                <h5 class="card-title mb-1">{{ collect($senaraiPermohonan ?? [])->where('status', 'ditolak')->count() }}</h5>
                 <p class="card-text text-muted small">Ditolak</p>
             </div>
         </div>
@@ -122,29 +122,29 @@ Senarai Permohonan
 @if(isset($senaraiPermohonan) && count($senaraiPermohonan) > 0)
     <div class="row" id="applicationsList">
         @foreach($senaraiPermohonan as $item)
-        <div class="col-md-6 col-lg-4 mb-4 application-card" data-status="{{ $item['status'] ?? 'pending' }}">
+        <div class="col-md-6 col-lg-4 mb-4 application-card" data-status="{{ $item->status ?? 'pending' }}">
             <div class="card h-100 card-hover">
                 <div class="card-header bg-transparent border-bottom-0 pb-0">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title mb-1">Permohonan #{{ $item['id'] }}</h6>
-                            <small class="text-muted">{{ $item['created_at'] ?? date('d/m/Y') }}</small>
+                            <h6 class="card-title mb-1">Permohonan #JDN{{ str_pad($item->id, 7, '0', STR_PAD_LEFT) }}</h6>
+                            <small class="text-muted">{{ date('d/m/Y', strtotime($item->created_at)) }}</small>
                         </div>
                         @php
-                            $status = $item['status'] ?? 'pending';
+                            $status = $item->status ?? 'pending';
                             $statusClass = match($status) {
-                                'approved' => 'bg-success',
-                                'rejected' => 'bg-danger', 
+                                'lulus' => 'bg-success',
+                                'ditolak' => 'bg-danger', 
                                 'pending' => 'bg-warning',
-                                'draft' => 'bg-secondary',
-                                default => 'bg-primary'
+                                'diproses' => 'bg-info',
+                                default => 'bg-secondary'
                             };
                             $statusText = match($status) {
-                                'approved' => 'Diluluskan',
-                                'rejected' => 'Ditolak',
-                                'pending' => 'Dalam Proses', 
-                                'draft' => 'Draf',
-                                default => 'Baru'
+                                'lulus' => 'Lulus',
+                                'ditolak' => 'Ditolak',
+                                'pending' => 'Pending', 
+                                'diproses' => 'Diproses',
+                                default => 'Tidak Diketahui'
                             };
                         @endphp
                         <span class="badge {{ $statusClass }} status-badge">{{ $statusText }}</span>
@@ -154,41 +154,45 @@ Senarai Permohonan
                     <div class="mb-3">
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-user text-muted me-2"></i>
-                            <strong>{{ $item['nama'] }}</strong>
+                            <strong>{{ $item->nama }}</strong>
                         </div>
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-id-card text-muted me-2"></i>
-                            <span class="text-muted">{{ $item['no_kp'] }}</span>
+                            <i class="fas fa-envelope text-muted me-2"></i>
+                            <span class="text-muted">{{ $item->email }}</span>
                         </div>
                     </div>
                     
-                    @if(isset($item['jenis_permohonan']))
+                    @if($item->jenis_permohonan)
                     <div class="mb-3">
                         <small class="text-muted">Jenis Permohonan:</small>
-                        <div class="fw-medium">{{ $item['jenis_permohonan'] }}</div>
+                        @php
+                            $jenisText = match($item->jenis_permohonan) {
+                                'permit_kerja' => 'Permit Kerja',
+                                'visa_kerja' => 'Visa Kerja',
+                                'permit_tinggal' => 'Permit Tinggal',
+                                'lain_lain' => 'Lain-lain',
+                                default => ucfirst($item->jenis_permohonan)
+                            };
+                        @endphp
+                        <div class="fw-medium">{{ $jenisText }}</div>
                     </div>
                     @endif
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <div class="d-flex gap-2">
-                        <a href="{{ route('pemohon.permohonan.detail', $item['id']) }}" class="btn btn-outline-primary btn-sm flex-fill">
-                            <i class="fas fa-eye me-1"></i>Lihat
+                        <a href="{{ route('pemohon.permohonan.detail', $item->id) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye"></i> Lihat
                         </a>
-                        @if(($item['status'] ?? 'pending') !== 'approved')
-                        <a href="{{ route('pemohon.permohonan.edit', $item['id']) }}" class="btn btn-outline-warning btn-sm flex-fill">
-                            <i class="fas fa-edit me-1"></i>Edit
+                        @if($status === 'pending' || $status === 'diproses')
+                        <a href="{{ route('pemohon.permohonan.edit', $item->id) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-edit"></i> Edit
                         </a>
                         @endif
-                        <button type="button" class="btn btn-outline-danger btn-sm" 
-                                onclick="confirmDelete('{{ $item['id'] }}')" title="Padam">
-                            <i class="fas fa-trash me-1"></i>Padam
+                        @if($status === 'pending')
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete({{ $item->id }})">
+                            <i class="fas fa-trash"></i> Hapus
                         </button>
-                        <form id="delete-form-{{ $item['id'] }}" 
-                              action="#" 
-                              method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -265,10 +269,27 @@ document.getElementById('statusFilter').addEventListener('change', function() {
     });
 });
 
-// Delete confirmation
 function confirmDelete(id) {
-    if (confirm('Adakah anda pasti ingin memadam permohonan ini?')) {
-        document.getElementById('delete-form-' + id).submit();
+    if (confirm('Adakah anda pasti untuk menghapuskan permohonan ini?')) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `{{ url('/permohonan') }}/${id}`;
+        
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = '{{ csrf_token() }}';
+        
+        form.appendChild(methodInput);
+        form.appendChild(tokenInput);
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 

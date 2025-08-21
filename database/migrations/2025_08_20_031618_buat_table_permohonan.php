@@ -26,6 +26,7 @@ return new class extends Migration
             $table->date('pengakuan_tarikh')->nullable();
             $table->string('status', 100)->default('deraf');
             $table->timestamps(); // created_at dan updated_at
+            $table->softDeletes();
         });
     }
 

@@ -9,6 +9,9 @@
         Senarai Pengguna
     </div>
     <div class="card-body">
+
+    @include('alert')
+    
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
@@ -28,7 +31,11 @@
                     <td>{{ $user->phone }}</td>
                     <td>
                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-info">Kemaskini</a>
-                        <a href="#" class="btn btn-danger">Padam</a>
+                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Adakah anda pasti untuk memadam pengguna ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Padam</button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach

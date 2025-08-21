@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Permohonan;
 
 class PermohonanController extends Controller
 {
@@ -15,12 +17,18 @@ class PermohonanController extends Controller
     {
         $pageTitle = 'Senarai Permohonan Pekerja';
         
-        $senaraiPermohonan = [
-            ['id' => 1, 'nama' => 'Ali', 'no_kp' => '808080808080', 'status' => 'pending'],
-            ['id' => 2, 'nama' => 'Ahmad', 'no_kp' => '808080808080', 'status' => 'approved'],
-            ['id' => 3, 'nama' => 'Siti', 'no_kp' => '808080808080', 'status' => 'rejected'],
-            ['id' => 4, 'nama' => 'Upin', 'no_kp' => '808080808080', 'status' => 'pending'],
-        ];
+        // Menggunakan query builder untuk mengambil data permohonan dengan join ke users table
+        $senaraiPermohonan = DB::table('permohonan')
+            ->join('users', 'permohonan.user_id', '=', 'users.id')
+            ->select(
+                'permohonan.*',
+                'users.name as nama',
+                'users.email'
+            )
+            ->where('permohonan.user_id', Auth::id())
+            ->whereNull('permohonan.deleted_at')
+            ->orderBy('permohonan.created_at', 'desc')
+            ->get();
         
         return view('pemohon.permohonan.template-senarai', compact('pageTitle', 'senaraiPermohonan'));
     }
@@ -30,43 +38,25 @@ class PermohonanController extends Controller
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-
-        dd($data);
-
         return view('pemohon.permohonan.template-baru');
     }
 
     /**
-     * Store new permohonan
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // Validate the request data
+        // Validasi data
         $validator = Validator::make($request->all(), [
-            'nama_penuh' => 'required|string|max:255',
-            'no_kp' => 'required|string|size:12|regex:/^[0-9]+$/',
-            'no_telefon' => 'required|string|max:15|regex:/^[0-9+-]+$/',
-            'alamat' => 'required|string|max:500',
-            'jenis_permohonan' => 'required|string|in:baru,pembaharuan',
-            'dokumen' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ], [
-            'nama_penuh.required' => 'Nama penuh wajib diisi',
-            'nama_penuh.max' => 'Nama penuh tidak boleh melebihi 255 aksara',
-            'no_kp.required' => 'Nombor kad pengenalan wajib diisi',
-            'no_kp.size' => 'Nombor kad pengenalan mesti 12 digit',
-            'no_kp.regex' => 'Nombor kad pengenalan hanya boleh mengandungi angka',
-            'no_telefon.required' => 'Nombor telefon wajib diisi',
-            'no_telefon.regex' => 'Format nombor telefon tidak sah',
-            'alamat.required' => 'Alamat wajib diisi',
-            'alamat.max' => 'Alamat tidak boleh melebihi 500 aksara',
-            'jenis_permohonan.required' => 'Jenis permohonan wajib dipilih',
-            'jenis_permohonan.in' => 'Jenis permohonan tidak sah',
-            'dokumen.mimes' => 'Dokumen mesti dalam format PDF, JPG, JPEG atau PNG',
-            'dokumen.max' => 'Saiz dokumen tidak boleh melebihi 2MB',
+            'jenis_permohonan' => 'required|string|max:100',
+            'wilayah_asal' => 'required|string|max:255',
+            'wilayah_ibu_negara' => 'required|string|max:255',
+            'tarikh_lapor_diri' => 'required|date',
+            'tarikh_terakhir_kemudahan' => 'nullable|date',
+            'tarikh_kemudahan_diperlukan' => 'nullable|date',
+            'pengakuan' => 'required|string',
+            'pengakuan_tarikh' => 'required|date',
+            'status' => 'nullable|string|in:pending,diproses,lulus,ditolak',
         ]);
 
         if ($validator->fails()) {
@@ -76,127 +66,133 @@ class PermohonanController extends Controller
         }
 
         try {
-            // Here you would typically save to database
-            // Example: Permohonan::create($validatedData);
-            
+            // Simpan data ke database menggunakan query builder
+            $permohonanId = DB::table('permohonan')->insertGetId([
+                'user_id' => Auth::id(),
+                'jenis_permohonan' => $request->jenis_permohonan,
+                'wilayah_asal' => $request->wilayah_asal,
+                'wilayah_ibu_negara' => $request->wilayah_ibu_negara,
+                'tarikh_lapor_diri' => $request->tarikh_lapor_diri,
+                'tarikh_terakhir_kemudahan' => $request->tarikh_terakhir_kemudahan,
+                'tarikh_kemudahan_diperlukan' => $request->tarikh_kemudahan_diperlukan,
+                'pengakuan' => $request->pengakuan,
+                'pengakuan_tarikh' => $request->pengakuan_tarikh,
+                'status' => $request->status ?? 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             return redirect()->route('pemohon.permohonan.senarai')
-                            ->with('success', 'Permohonan berjaya dihantar!');
+                ->with('success', 'Permohonan berjaya disimpan!');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Ralat berlaku semasa menghantar permohonan. Sila cuba lagi.')
+                ->with('error', 'Ralat berlaku semasa menyimpan permohonan: ' . $e->getMessage())
                 ->withInput();
         }
     }
 
     /**
-     * Display specific permohonan
+     * Display the specified resource.
      */
-    public function show($id)
+    public function show(string $id)
     {
-        // Get permohonan by ID
-        return view('pemohon.permohonan.template-detail', compact('id'));
-    }
-
-    /**
-     * Delete permohonan
-     *
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy($id)
-    {
-        // Validate ID
-        if (!is_numeric($id) || $id <= 0) {
-            return redirect()->route('pemohon.permohonan.senarai')
-                ->with('error', 'ID permohonan tidak sah.');
-        }
-
-        try {
-            // Here you would typically delete from database
-            // Example: 
-            // $permohonan = Permohonan::findOrFail($id);
-            // $permohonan->delete();
-            
-            return redirect()->route('pemohon.permohonan.senarai')
-                            ->with('success', 'Permohonan berjaya dipadam!');
-        } catch (\Exception $e) {
-            return redirect()->route('pemohon.permohonan.senarai')
-                ->with('error', 'Ralat berlaku semasa memadam permohonan. Sila cuba lagi.');
-        }
-    }
-
-    /**
-     * Show form for editing permohonan
-     *
-     * @param int $id
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
-    {
-        // Validate ID
-        if (!is_numeric($id) || $id <= 0) {
-            return redirect()->route('pemohon.permohonan.senarai')
-                ->with('error', 'ID permohonan tidak sah.');
-        }
-
-        try {
-            // Here you would typically get from database
-            // Example: $permohonan = Permohonan::findOrFail($id);
-            
-            // For now, using sample data
-            $permohonan = [
-                'id' => $id,
-                'nama_penuh' => 'Contoh Nama',
-                'no_kp' => '123456789012',
-                'no_telefon' => '0123456789',
-                'alamat' => 'Contoh Alamat',
-                'jenis_permohonan' => 'baru'
-            ];
-            
-            return view('pemohon.permohonan.template-edit', compact('permohonan'));
-        } catch (\Exception $e) {
+        $pageTitle = 'Butiran Permohonan';
+        
+        // Ambil data permohonan dari database menggunakan query builder
+        $permohonan = DB::table('permohonan')
+            ->join('users', 'permohonan.user_id', '=', 'users.id')
+            ->select(
+                'permohonan.*', 
+                'users.name as nama_pemohon', 
+                'users.email'
+            )
+            ->where('permohonan.id', $id)
+            ->where('permohonan.user_id', Auth::id())
+            ->whereNull('permohonan.deleted_at')
+            ->first();
+        
+        if (!$permohonan) {
             return redirect()->route('pemohon.permohonan.senarai')
                 ->with('error', 'Permohonan tidak dijumpai.');
         }
+        
+        return view('pemohon.permohonan.template-detail', compact('pageTitle', 'permohonan'));
     }
 
     /**
-     * Update permohonan
-     *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function update(Request $request, Permohonan $permohonan)
+    public function destroy(string $id)
     {
-        // Validate ID
-        if (!is_numeric($id) || $id <= 0) {
-            return redirect()->route('pemohon.permohonan.senarai')
-                ->with('error', 'ID permohonan tidak sah.');
-        }
+        try {
+            // Soft delete permohonan menggunakan query builder
+            $deleted = DB::table('permohonan')
+                ->where('id', $id)
+                ->where('user_id', Auth::id())
+                ->whereNull('deleted_at')
+                ->where('status', 'pending') // Hanya boleh delete jika status pending
+                ->update([
+                    'deleted_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            
+            if (!$deleted) {
+                return redirect()->back()
+                    ->with('error', 'Permohonan tidak dijumpai atau tidak boleh dipadam.');
+            }
 
-        // Validate the request data
+            return redirect()->route('pemohon.permohonan.senarai')
+                ->with('success', 'Permohonan berjaya dipadam!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Ralat berlaku semasa memadam permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $pageTitle = 'Kemaskini Permohonan';
+        
+        // Ambil data permohonan dari database menggunakan query builder
+        $permohonan = DB::table('permohonan')
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereNull('deleted_at')
+            ->first();
+        
+        if (!$permohonan) {
+            return redirect()->route('pemohon.permohonan.senarai')
+                ->with('error', 'Permohonan tidak dijumpai.');
+        }
+        
+        // Hanya boleh edit jika status masih pending
+        if ($permohonan->status !== 'pending') {
+            return redirect()->route('pemohon.permohonan.senarai')
+                ->with('error', 'Permohonan tidak boleh dikemaskini kerana status bukan pending.');
+        }
+        
+        return view('pemohon.permohonan.template-kemaskini', compact('pageTitle', 'permohonan'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        // Validasi data
         $validator = Validator::make($request->all(), [
-            'nama_penuh' => 'required|string|max:255',
-            'no_kp' => 'required|string|size:12|regex:/^[0-9]+$/',
-            'no_telefon' => 'required|string|max:15|regex:/^[0-9+-]+$/',
-            'alamat' => 'required|string|max:500',
-            'jenis_permohonan' => 'required|string|in:baru,pembaharuan',
-            'dokumen' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ], [
-            'nama_penuh.required' => 'Nama penuh wajib diisi',
-            'nama_penuh.max' => 'Nama penuh tidak boleh melebihi 255 aksara',
-            'no_kp.required' => 'Nombor kad pengenalan wajib diisi',
-            'no_kp.size' => 'Nombor kad pengenalan mesti 12 digit',
-            'no_kp.regex' => 'Nombor kad pengenalan hanya boleh mengandungi angka',
-            'no_telefon.required' => 'Nombor telefon wajib diisi',
-            'no_telefon.regex' => 'Format nombor telefon tidak sah',
-            'alamat.required' => 'Alamat wajib diisi',
-            'alamat.max' => 'Alamat tidak boleh melebihi 500 aksara',
-            'jenis_permohonan.required' => 'Jenis permohonan wajib dipilih',
-            'jenis_permohonan.in' => 'Jenis permohonan tidak sah',
-            'dokumen.mimes' => 'Dokumen mesti dalam format PDF, JPG, JPEG atau PNG',
-            'dokumen.max' => 'Saiz dokumen tidak boleh melebihi 2MB',
+            'jenis_permohonan' => 'required|string|max:100',
+            'wilayah_asal' => 'required|string|max:255',
+            'wilayah_ibu_negara' => 'required|string|max:255',
+            'tarikh_lapor_diri' => 'required|date',
+            'tarikh_terakhir_kemudahan' => 'nullable|date',
+            'tarikh_kemudahan_diperlukan' => 'nullable|date',
+            'pengakuan' => 'required|string',
+            'pengakuan_tarikh' => 'required|date',
+            'status' => 'nullable|string|in:pending,diproses,lulus,ditolak',
         ]);
 
         if ($validator->fails()) {
@@ -206,16 +202,36 @@ class PermohonanController extends Controller
         }
 
         try {
-            // Here you would typically update in database
-            // Example: 
-            // $permohonan = Permohonan::findOrFail($id);
-            // $permohonan->update($request->validated());
+            // Update data dalam database menggunakan query builder
+            $updated = DB::table('permohonan')
+                ->where('id', $id)
+                ->where('user_id', Auth::id())
+                ->whereNull('deleted_at')
+                ->where('status', 'pending') // Hanya boleh update jika status pending
+                ->update([
+                    'jenis_permohonan' => $request->jenis_permohonan,
+                    'wilayah_asal' => $request->wilayah_asal,
+                    'wilayah_ibu_negara' => $request->wilayah_ibu_negara,
+                    'tarikh_lapor_diri' => $request->tarikh_lapor_diri,
+                    'tarikh_terakhir_kemudahan' => $request->tarikh_terakhir_kemudahan,
+                    'tarikh_kemudahan_diperlukan' => $request->tarikh_kemudahan_diperlukan,
+                    'pengakuan' => $request->pengakuan,
+                    'pengakuan_tarikh' => $request->pengakuan_tarikh,
+                    'status' => $request->status ?? 'pending',
+                    'updated_at' => now(),
+                ]);
             
+            if (!$updated) {
+                return redirect()->back()
+                    ->with('error', 'Permohonan tidak dijumpai atau tidak boleh dikemaskini.')
+                    ->withInput();
+            }
+
             return redirect()->route('pemohon.permohonan.detail', $id)
-                            ->with('success', 'Permohonan berjaya dikemaskini!');
+                ->with('success', 'Permohonan berjaya dikemaskini!');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Ralat berlaku semasa mengemaskini permohonan. Sila cuba lagi.')
+                ->with('error', 'Ralat berlaku semasa mengemaskini permohonan: ' . $e->getMessage())
                 ->withInput();
         }
     }

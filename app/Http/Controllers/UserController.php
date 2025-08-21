@@ -14,7 +14,8 @@ class UserController extends Controller
     public function index()
     {
         // Dapatkan senarai users daripada table users menerusi Query Builder
-        $senaraiUsers = DB::table('users')->get();
+        // $senaraiUsers = DB::table('users')->latest('id')->get();
+        $senaraiUsers = DB::table('users')->orderBy('id', 'asc')->get();
 
         // Kembalikan view dan passing data users
         return view('admin.users.template-index', compact('senaraiUsers'));
@@ -114,6 +115,24 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+        // Dapatkan data user berdasarkan id
+        $user = DB::table('users')->where('id', $id)->first(); // LIMIT 1
+
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'User tidak ditemui');
+        }
+
+        // Check if trying to delete currently logged in user
+        if ($id == auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'You cannot delete your own account');
+        }
+
+        // Padam data user
+        DB::table('users')->where('id', $id)->delete();
+
+        // Kembalikan user ke halaman index dengan mesej berjaya
+        return redirect()->route('admin.users.index')->with('success', 'User berjaya dipadam');
         //
     }
 }

@@ -107,6 +107,25 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
         
+        /* Submenu styling */
+        .nav-link.collapsed .bi-chevron-down {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-link:not(.collapsed) .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+        
+        .collapse .nav-link {
+            font-size: 0.9rem;
+            padding-left: 2rem;
+        }
+        
+        .collapse .nav-link:hover {
+            background-color: #6c757d;
+        }
+        
         .main-wrapper {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
@@ -293,24 +312,41 @@
                 </a>
             </div>
             
+            <!-- Permohonan Menu dengan Submenu -->
             <div class="nav-item">
-                <a href="{{ route('pemohon.permohonan.senarai') }}" class="nav-link {{ request()->routeIs('pemohon.permohonan.*') ? 'active' : '' }}">
-                    <i class="bi bi-file-earmark-plus"></i>
-                    Permohonan Saya
+                <a href="#" class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#permohonanSubmenu" aria-expanded="false" aria-controls="permohonanSubmenu">
+                    <i class="bi bi-file-earmark-text"></i>
+                    Permohonan
+                    <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
+                <div class="collapse" id="permohonanSubmenu">
+                    <div class="nav flex-column ms-3">
+                        <div class="nav-item">
+                            <a href="{{ route('pemohon.permohonan.senarai') }}" class="nav-link py-2">
+                                <i class="bi bi-list-ul"></i>
+                                Senarai
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="{{ route('pemohon.permohonan.baru') }}" class="nav-link py-2">
+                                <i class="bi bi-plus-circle"></i>
+                                Baru
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link py-2">
+                                <i class="bi bi-clock-history"></i>
+                                Riwayat
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="nav-item">
                 <a href="" class="nav-link {{ request()->routeIs('pemohon.dokumen.*') ? 'active' : '' }}">
                     <i class="bi bi-folder"></i>
                     Dokumen
-                </a>
-            </div>
-            
-            <div class="nav-item">
-                <a href="" class="nav-link {{ request()->routeIs('pemohon.riwayat.*') ? 'active' : '' }}">
-                    <i class="bi bi-clock-history"></i>
-                    Riwayat
                 </a>
             </div>
             
