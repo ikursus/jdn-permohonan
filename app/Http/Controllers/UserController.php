@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -32,7 +33,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validasi data
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email:filter|unique:users,email',
+            'phone' => 'required',
+            'password' => 'required|min:6',
+            'status' => 'required|in:active,inactive',
+        ]);
     }
 
     /**
@@ -64,7 +72,41 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validasi data
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email:filter|unique:users,email,' . $id,
+            'phone' => 'required',
+            'status' => 'required|in:active,inactive,pending',
+        ]);
+
+        // Jika password diisi
+        if ($request->password) {
+
+            $request->validate([
+                'password' => Password::min(4)
+                ->letters()
+                // ->mixedCase()
+                // ->numbers()
+                // ->symbols()
+                // ->uncompromised()
+            ]);
+
+            $data['password'] = bcrypt($request->password);
+        }
+
+        // Dapatkan data user berdasarkan id
+        $user = DB::table('users')->where('id', $id)->first(); // LIMIT 1
+
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'User tidak ditemui');
+        }
+
+        // Update data user
+        DB::table('users')->where('id', $id)->update($data);
+
+        // Kembalikan user ke halaman edit dengan mesej berjaya
+        return redirect()->back()->with('success', 'User berjaya dikemaskini');
     }
 
     /**

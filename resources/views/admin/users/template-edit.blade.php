@@ -12,9 +12,13 @@
         </a>
     </div>
     <div class="card-body">
+
+        @include('alert')
+
         <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
             @csrf
             @method('PUT')
+            <input type="hidden" name="_method" value="PUT">
             
             <div class="row">
                 <div class="col-md-6">
@@ -55,8 +59,8 @@
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
-                            <option value="aktif" {{ old('status', $user->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="tidak_aktif" {{ old('status', $user->status) == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                            <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ old('status', $user->status) == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                             <option value="pending" {{ old('status', $user->status) == 'pending' ? 'selected' : '' }}>Pending Verifikasi</option>
                         </select>
                         @error('status')
