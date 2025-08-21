@@ -5,24 +5,9 @@
 
 @section('content')
 @php
-    // Sample ticket data
-    $tiket = [
-        'id' => 'TK001',
-        'subjek' => 'Masalah muat naik dokumen',
-        'kategori' => 'Teknikal',
-        'status' => 'in_progress',
-        'keutamaan' => 'tinggi',
-        'penerangan' => 'Saya menghadapi masalah ketika cuba memuat naik dokumen PDF untuk permohonan saya. Sistem menunjukkan ralat "Upload failed" walaupun saiz fail adalah dalam had yang dibenarkan.',
-        'langkah_diambil' => 'Saya telah cuba menggunakan pelayar yang berbeza (Chrome dan Firefox) dan juga telah clear cache. Masalah masih berlaku.',
-        'tarikh_dibuat' => '2024-01-15 09:30:00',
-        'tarikh_kemaskini' => '2024-01-16 14:20:00',
-        'lampiran' => [
-            ['nama' => 'screenshot_error.png', 'saiz' => '245 KB'],
-            ['nama' => 'dokumen_gagal.pdf', 'saiz' => '1.2 MB']
-        ],
-        'assigned_to' => 'Ahmad Razak',
-        'estimated_resolution' => '2024-01-17 17:00:00'
-    ];
+    // Data will be passed from controller
+    // $helpdesk variable contains the ticket data
+@endphp
     
     $komunikasi = [
         [
@@ -63,14 +48,14 @@
 <div class="content-header">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="page-title">Tiket #{{ $tiket['id'] }}</h1>
-            <p class="page-subtitle">{{ $tiket['subjek'] }}</p>
+            <h1 class="page-title">Tiket #{{ $helpdesk->ticket_id }}</h1>
+            <p class="page-subtitle">{{ $helpdesk->subject }}</p>
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('pemohon.helpdesk.senarai') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Kembali
             </a>
-            @if($tiket['status'] !== 'closed')
+            @if($helpdesk->status !== 'Closed')
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal">
                 <i class="bi bi-reply me-2"></i>Balas
             </button>
@@ -92,11 +77,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>ID Tiket:</strong>
-                        <span class="text-primary">#{{ $tiket['id'] }}</span>
+                        <span class="text-primary">#{{ $helpdesk->ticket_id }}</span>
                     </div>
                     <div class="col-md-6">
                         <strong>Kategori:</strong>
-                        <span class="badge bg-secondary">{{ $tiket['kategori'] }}</span>
+                        <span class="badge bg-secondary">{{ $helpdesk->category }}</span>
                     </div>
                 </div>
                 
@@ -104,96 +89,48 @@
                     <div class="col-md-6">
                         <strong>Status:</strong>
                         @php
-                            $statusClass = match($tiket['status']) {
-                                'pending' => 'bg-warning',
-                                'in_progress' => 'bg-info',
-                                'resolved' => 'bg-success',
-                                'closed' => 'bg-secondary',
+                            $statusClass = match($helpdesk->status) {
+                                'Open' => 'bg-warning',
+                                'In Progress' => 'bg-info',
+                                'Resolved' => 'bg-success',
+                                'Closed' => 'bg-secondary',
                                 default => 'bg-secondary'
                             };
-                            $statusText = match($tiket['status']) {
-                                'pending' => 'Menunggu',
-                                'in_progress' => 'Dalam Proses',
-                                'resolved' => 'Selesai',
-                                'closed' => 'Ditutup',
-                                default => 'Tidak Diketahui'
-                            };
                         @endphp
-                        <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
+                        <span class="badge {{ $statusClass }}">{{ $helpdesk->status }}</span>
                     </div>
                     <div class="col-md-6">
                         <strong>Keutamaan:</strong>
                         @php
-                            $keutamaanClass = match($tiket['keutamaan']) {
-                                'tinggi' => 'text-danger',
-                                'sederhana' => 'text-warning',
-                                'rendah' => 'text-success',
-                                'kritikal' => 'text-danger fw-bold',
+                            $priorityClass = match($helpdesk->priority) {
+                                'High' => 'text-danger',
+                                'Medium' => 'text-warning',
+                                'Low' => 'text-success',
+                                'Urgent' => 'text-danger fw-bold',
                                 default => 'text-secondary'
                             };
                         @endphp
-                        <span class="{{ $keutamaanClass }} text-capitalize fw-medium">{{ $tiket['keutamaan'] }}</span>
+                        <span class="{{ $priorityClass }} text-capitalize fw-medium">{{ $helpdesk->priority }}</span>
                     </div>
                 </div>
                 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Tarikh Dibuat:</strong>
-                        <span>{{ date('d/m/Y H:i', strtotime($tiket['tarikh_dibuat'])) }}</span>
+                        <span>{{ $helpdesk->created_at->format('d/m/Y H:i') }}</span>
                     </div>
                     <div class="col-md-6">
                         <strong>Kemaskini Terakhir:</strong>
-                        <span>{{ date('d/m/Y H:i', strtotime($tiket['tarikh_kemaskini'])) }}</span>
+                        <span>{{ $helpdesk->updated_at->format('d/m/Y H:i') }}</span>
                     </div>
                 </div>
-                
-                @if($tiket['assigned_to'])
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <strong>Ditugaskan Kepada:</strong>
-                        <span>{{ $tiket['assigned_to'] }}</span>
-                    </div>
-                    @if($tiket['estimated_resolution'])
-                    <div class="col-md-6">
-                        <strong>Jangkaan Penyelesaian:</strong>
-                        <span>{{ date('d/m/Y H:i', strtotime($tiket['estimated_resolution'])) }}</span>
-                    </div>
-                    @endif
-                </div>
-                @endif
                 
                 <div class="mb-3">
                     <strong>Penerangan Masalah:</strong>
                     <div class="mt-2 p-3 bg-light rounded">
-                        {{ $tiket['penerangan'] }}
+                        {{ $helpdesk->description }}
                     </div>
                 </div>
-                
-                @if($tiket['langkah_diambil'])
-                <div class="mb-3">
-                    <strong>Langkah Yang Telah Diambil:</strong>
-                    <div class="mt-2 p-3 bg-light rounded">
-                        {{ $tiket['langkah_diambil'] }}
-                    </div>
-                </div>
-                @endif
-                
-                @if(count($tiket['lampiran']) > 0)
-                <div>
-                    <strong>Lampiran Asal:</strong>
-                    <div class="mt-2">
-                        @foreach($tiket['lampiran'] as $lampiran)
-                        <div class="d-inline-block me-3 mb-2">
-                            <a href="#" class="text-decoration-none">
-                                <i class="bi bi-paperclip me-1"></i>
-                                {{ $lampiran['nama'] }}
-                                <small class="text-muted">({{ $lampiran['saiz'] }})</small>
-                            </a>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
         
@@ -322,16 +259,13 @@
                 </h6>
             </div>
             <div class="card-body">
-                @if($tiket['status'] !== 'closed')
+                @if($helpdesk->status !== 'Closed')
                 <div class="d-grid gap-2">
                     <button type="button" class="btn btn-primary btn-sm" 
                             data-bs-toggle="modal" data-bs-target="#replyModal">
                         <i class="bi bi-reply me-2"></i>Balas Tiket
                     </button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-paperclip me-2"></i>Tambah Lampiran
-                    </button>
-                    @if($tiket['status'] === 'resolved')
+                    @if($helpdesk->status === 'Resolved')
                     <button type="button" class="btn btn-success btn-sm">
                         <i class="bi bi-check-circle me-2"></i>Tutup Tiket
                     </button>
@@ -355,8 +289,8 @@
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <strong class="small">Pegawai Bertugas:</strong>
-                    <p class="mb-1">{{ $tiket['assigned_to'] ?? 'Belum ditugaskan' }}</p>
+                    <strong class="small">Status Tiket:</strong>
+                    <p class="mb-1">{{ $helpdesk->status }}</p>
                 </div>
                 
                 <div class="mb-3">
@@ -385,11 +319,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="bi bi-reply me-2"></i>Balas Tiket #{{ $idtiket }}
+                    <i class="bi bi-reply me-2"></i>Balas Tiket #{{ $helpdesk->ticket_id }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="reply-form" method="POST" action="{{ route('pemohon.helpdesk.reply', $idtiket) }}" enctype="multipart/form-data">
+            <form id="reply-form" method="POST" action="{{ route('pemohon.helpdesk.reply', $helpdesk->ticket_id) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

@@ -70,70 +70,26 @@
             <div class="d-flex gap-2">
                 <select class="form-select form-select-sm" style="width: auto;">
                     <option value="">Semua Status</option>
-                    <option value="pending">Menunggu</option>
-                    <option value="in_progress">Dalam Proses</option>
-                    <option value="resolved">Selesai</option>
-                    <option value="closed">Ditutup</option>
+                    <option value="Open">Terbuka</option>
+                    <option value="In Progress">Dalam Proses</option>
+                    <option value="Resolved">Selesai</option>
+                    <option value="Closed">Ditutup</option>
                 </select>
                 <select class="form-select form-select-sm" style="width: auto;">
                     <option value="">Semua Kategori</option>
-                    <option value="teknikal">Teknikal</option>
-                    <option value="permohonan">Permohonan</option>
-                    <option value="dokumen">Dokumen</option>
-                    <option value="lain">Lain-lain</option>
+                    <option value="General">Umum</option>
+                    <option value="Technical">Teknikal</option>
+                    <option value="Application">Aplikasi</option>
+                    <option value="Document">Dokumen</option>
+                    <option value="Account">Akaun</option>
                 </select>
             </div>
         </div>
     </div>
     <div class="card-body">
         @php
-            $senaraiTiket = [
-                [
-                    'id' => 'TK001',
-                    'subjek' => 'Masalah muat naik dokumen',
-                    'kategori' => 'Teknikal',
-                    'status' => 'pending',
-                    'keutamaan' => 'tinggi',
-                    'tarikh_dibuat' => '2024-01-15',
-                    'tarikh_kemaskini' => '2024-01-15'
-                ],
-                [
-                    'id' => 'TK002',
-                    'subjek' => 'Pertanyaan status permohonan',
-                    'kategori' => 'Permohonan',
-                    'status' => 'in_progress',
-                    'keutamaan' => 'sederhana',
-                    'tarikh_dibuat' => '2024-01-14',
-                    'tarikh_kemaskini' => '2024-01-16'
-                ],
-                [
-                    'id' => 'TK003',
-                    'subjek' => 'Permintaan salinan dokumen',
-                    'kategori' => 'Dokumen',
-                    'status' => 'resolved',
-                    'keutamaan' => 'rendah',
-                    'tarikh_dibuat' => '2024-01-10',
-                    'tarikh_kemaskini' => '2024-01-12'
-                ],
-                [
-                    'id' => 'TK004',
-                    'subjek' => 'Masalah log masuk sistem',
-                    'kategori' => 'Teknikal',
-                    'status' => 'pending',
-                    'keutamaan' => 'tinggi',
-                    'tarikh_dibuat' => '2024-01-16',
-                    'tarikh_kemaskini' => '2024-01-16'
-                ],
-                [
-                    'id' => 'TK005',
-                    'subjek' => 'Pertanyaan prosedur permohonan',
-                    'kategori' => 'Lain-lain',
-                    'status' => 'resolved',
-                    'keutamaan' => 'sederhana',
-                    'tarikh_dibuat' => '2024-01-08',
-                    'tarikh_kemaskini' => '2024-01-09'
-                ]
-            ];
+            // Data will be passed from controller
+            $senaraiTiket = $helpdesks ?? [];
         @endphp
         
         @if(count($senaraiTiket) > 0)
@@ -155,31 +111,31 @@
                         @foreach($senaraiTiket as $tiket)
                         <tr>
                             <td>
-                                <strong class="text-primary">{{ $tiket['id'] }}</strong>
+                                <strong class="text-primary">{{ $tiket->ticket_id }}</strong>
                             </td>
                             <td>
-                                <a href="{{ route('pemohon.helpdesk.detail', $tiket['id']) }}" 
+                                <a href="{{ route('pemohon.helpdesk.detail', $tiket->id) }}" 
                                    class="text-decoration-none fw-medium">
-                                    {{ $tiket['subjek'] }}
+                                    {{ $tiket->subject }}
                                 </a>
                             </td>
                             <td>
-                                <span class="badge bg-secondary">{{ $tiket['kategori'] }}</span>
+                                <span class="badge bg-secondary">{{ $tiket->category }}</span>
                             </td>
                             <td>
                                 @php
-                                    $statusClass = match($tiket['status']) {
-                                        'pending' => 'bg-warning',
-                                        'in_progress' => 'bg-info',
-                                        'resolved' => 'bg-success',
-                                        'closed' => 'bg-secondary',
+                                    $statusClass = match($tiket->status) {
+                                        'Open' => 'bg-warning',
+                                        'In Progress' => 'bg-info',
+                                        'Resolved' => 'bg-success',
+                                        'Closed' => 'bg-secondary',
                                         default => 'bg-secondary'
                                     };
-                                    $statusText = match($tiket['status']) {
-                                        'pending' => 'Menunggu',
-                                        'in_progress' => 'Dalam Proses',
-                                        'resolved' => 'Selesai',
-                                        'closed' => 'Ditutup',
+                                    $statusText = match($tiket->status) {
+                                        'Open' => 'Terbuka',
+                                        'In Progress' => 'Dalam Proses',
+                                        'Resolved' => 'Selesai',
+                                        'Closed' => 'Ditutup',
                                         default => 'Tidak Diketahui'
                                     };
                                 @endphp
@@ -187,39 +143,41 @@
                             </td>
                             <td>
                                 @php
-                                    $keutamaanClass = match($tiket['keutamaan']) {
-                                        'tinggi' => 'text-danger',
-                                        'sederhana' => 'text-warning',
-                                        'rendah' => 'text-success',
+                                    $priorityClass = match($tiket->priority) {
+                                        'Urgent' => 'text-danger',
+                                        'High' => 'text-warning',
+                                        'Medium' => 'text-info',
+                                        'Low' => 'text-success',
                                         default => 'text-secondary'
                                     };
-                                    $keutamaanIcon = match($tiket['keutamaan']) {
-                                        'tinggi' => 'bi-arrow-up-circle-fill',
-                                        'sederhana' => 'bi-dash-circle-fill',
-                                        'rendah' => 'bi-arrow-down-circle-fill',
+                                    $priorityIcon = match($tiket->priority) {
+                                        'Urgent' => 'bi-exclamation-triangle-fill',
+                                        'High' => 'bi-arrow-up-circle-fill',
+                                        'Medium' => 'bi-dash-circle-fill',
+                                        'Low' => 'bi-arrow-down-circle-fill',
                                         default => 'bi-circle-fill'
                                     };
                                 @endphp
-                                <i class="bi {{ $keutamaanIcon }} {{ $keutamaanClass }}"></i>
-                                <span class="{{ $keutamaanClass }} text-capitalize">{{ $tiket['keutamaan'] }}</span>
+                                <i class="bi {{ $priorityIcon }} {{ $priorityClass }}"></i>
+                                <span class="{{ $priorityClass }}">{{ $tiket->priority }}</span>
                             </td>
                             <td>
                                 <small class="text-muted">
-                                    {{ date('d/m/Y', strtotime($tiket['tarikh_dibuat'])) }}
+                                    {{ $tiket->created_at->format('d/m/Y') }}
                                 </small>
                             </td>
                             <td>
                                 <small class="text-muted">
-                                    {{ date('d/m/Y', strtotime($tiket['tarikh_kemaskini'])) }}
+                                    {{ $tiket->updated_at->format('d/m/Y') }}
                                 </small>
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('pemohon.helpdesk.detail', $tiket['id']) }}" 
+                                    <a href="{{ route('pemohon.helpdesk.detail', $tiket->id) }}" 
                                        class="btn btn-outline-primary" title="Lihat Detail">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    @if($tiket['status'] !== 'closed')
+                                    @if($tiket->status !== 'Closed')
                                     <button type="button" class="btn btn-outline-secondary" 
                                             title="Tambah Komen">
                                         <i class="bi bi-chat-dots"></i>

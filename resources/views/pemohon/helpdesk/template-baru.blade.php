@@ -30,97 +30,68 @@
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="kategori" class="form-label">Kategori <span class="text-danger">*</span></label>
-                            <select class="form-select @error('kategori') is-invalid @enderror" 
-                                    id="kategori" name="kategori" required>
+                            <label for="category" class="form-label">Kategori <span class="text-danger">*</span></label>
+                            <select class="form-select @error('category') is-invalid @enderror" 
+                                    id="category" name="category" required>
                                 <option value="">Pilih Kategori</option>
-                                <option value="teknikal" {{ old('kategori') == 'teknikal' ? 'selected' : '' }}>Masalah Teknikal</option>
-                                <option value="permohonan" {{ old('kategori') == 'permohonan' ? 'selected' : '' }}>Pertanyaan Permohonan</option>
-                                <option value="dokumen" {{ old('kategori') == 'dokumen' ? 'selected' : '' }}>Masalah Dokumen</option>
-                                <option value="akaun" {{ old('kategori') == 'akaun' ? 'selected' : '' }}>Masalah Akaun</option>
-                                <option value="lain" {{ old('kategori') == 'lain' ? 'selected' : '' }}>Lain-lain</option>
+                                <option value="General" {{ old('category') == 'General' ? 'selected' : '' }}>General</option>
+                                <option value="Technical" {{ old('category') == 'Technical' ? 'selected' : '' }}>Technical</option>
+                                <option value="Application" {{ old('category') == 'Application' ? 'selected' : '' }}>Application</option>
+                                <option value="Document" {{ old('category') == 'Document' ? 'selected' : '' }}>Document</option>
+                                <option value="Account" {{ old('category') == 'Account' ? 'selected' : '' }}>Account</option>
                             </select>
-                            @error('kategori')
+                            @error('category')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="keutamaan" class="form-label">Tahap Keutamaan <span class="text-danger">*</span></label>
-                            <select class="form-select @error('keutamaan') is-invalid @enderror" 
-                                    id="keutamaan" name="keutamaan" required>
+                            <label for="priority" class="form-label">Tahap Keutamaan <span class="text-danger">*</span></label>
+                            <select class="form-select @error('priority') is-invalid @enderror" 
+                                    id="priority" name="priority" required>
                                 <option value="">Pilih Keutamaan</option>
-                                <option value="rendah" {{ old('keutamaan') == 'rendah' ? 'selected' : '' }}>Rendah</option>
-                                <option value="sederhana" {{ old('keutamaan') == 'sederhana' ? 'selected' : '' }}>Sederhana</option>
-                                <option value="tinggi" {{ old('keutamaan') == 'tinggi' ? 'selected' : '' }}>Tinggi</option>
-                                <option value="kritikal" {{ old('keutamaan') == 'kritikal' ? 'selected' : '' }}>Kritikal</option>
+                                <option value="Low" {{ old('priority') == 'Low' ? 'selected' : '' }}>Low</option>
+                                <option value="Medium" {{ old('priority') == 'Medium' ? 'selected' : '' }}>Medium</option>
+                                <option value="High" {{ old('priority') == 'High' ? 'selected' : '' }}>High</option>
+                                <option value="Urgent" {{ old('priority') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
                             </select>
-                            @error('keutamaan')
+                            @error('priority')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="subjek" class="form-label">Subjek <span class="text-danger">*</span></label>
+                        <label for="subject" class="form-label">Subjek <span class="text-danger">*</span></label>
                         <input type="text" 
-                               class="form-control @error('subjek') is-invalid @enderror" 
-                               id="subjek" 
-                               name="subjek" 
-                               value="{{ old('subjek') }}"
+                               class="form-control @error('subject') is-invalid @enderror" 
+                               id="subject" 
+                               name="subject" 
+                               value="{{ old('subject') }}"
                                placeholder="Masukkan subjek tiket anda"
                                maxlength="200"
                                required>
-                        @error('subjek')
+                        @error('subject')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <div class="form-text">Maksimum 200 aksara</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="penerangan" class="form-label">Penerangan Masalah <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('penerangan') is-invalid @enderror" 
-                                  id="penerangan" 
-                                  name="penerangan" 
+                        <label for="description" class="form-label">Penerangan Masalah <span class="text-danger">*</span></label>
+                        <textarea class="form-control @error('description') is-invalid @enderror" 
+                                  id="description" 
+                                  name="description" 
                                   rows="6"
                                   placeholder="Terangkan masalah atau pertanyaan anda dengan terperinci..."
                                   maxlength="2000"
-                                  required>{{ old('penerangan') }}</textarea>
-                        @error('penerangan')
+                                  required>{{ old('description') }}</textarea>
+                        @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <div class="form-text">Maksimum 2000 aksara. Sila berikan maklumat yang terperinci untuk membantu kami memahami masalah anda.</div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="langkah_diambil" class="form-label">Langkah Yang Telah Diambil</label>
-                        <textarea class="form-control @error('langkah_diambil') is-invalid @enderror" 
-                                  id="langkah_diambil" 
-                                  name="langkah_diambil" 
-                                  rows="3"
-                                  placeholder="Nyatakan langkah-langkah yang telah anda cuba untuk menyelesaikan masalah ini (jika ada)..."
-                                  maxlength="1000">{{ old('langkah_diambil') }}</textarea>
-                        @error('langkah_diambil')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Maksimum 1000 aksara (pilihan)</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="lampiran" class="form-label">Lampiran</label>
-                        <input type="file" 
-                               class="form-control @error('lampiran') is-invalid @enderror" 
-                               id="lampiran" 
-                               name="lampiran[]" 
-                               multiple
-                               accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.txt">
-                        @error('lampiran')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">
-                            Format yang dibenarkan: JPG, PNG, PDF, DOC, DOCX, TXT. Maksimum 5MB setiap fail. Maksimum 3 fail.
-                        </div>
-                        <div id="file-preview" class="mt-2"></div>
-                    </div>
+
                     
                     <div class="mb-4">
                         <div class="form-check">
@@ -253,42 +224,6 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // File upload preview
-        const fileInput = document.getElementById('lampiran');
-        const filePreview = document.getElementById('file-preview');
-        
-        fileInput.addEventListener('change', function() {
-            filePreview.innerHTML = '';
-            
-            if (this.files.length > 3) {
-                alert('Maksimum 3 fail sahaja dibenarkan.');
-                this.value = '';
-                return;
-            }
-            
-            Array.from(this.files).forEach((file, index) => {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert(`Fail "${file.name}" melebihi saiz maksimum 5MB.`);
-                    this.value = '';
-                    filePreview.innerHTML = '';
-                    return;
-                }
-                
-                const fileItem = document.createElement('div');
-                fileItem.className = 'alert alert-info alert-dismissible fade show py-2';
-                fileItem.innerHTML = `
-                    <small>
-                        <i class="bi bi-paperclip me-2"></i>
-                        <strong>${file.name}</strong> 
-                        <span class="text-muted">(${(file.size / 1024).toFixed(1)} KB)</span>
-                    </small>
-                    <button type="button" class="btn-close btn-close-sm" 
-                            onclick="removeFile(${index})"></button>
-                `;
-                filePreview.appendChild(fileItem);
-            });
-        });
-        
         // Character counter for textarea
         const textareas = document.querySelectorAll('textarea[maxlength]');
         textareas.forEach(textarea => {
@@ -313,44 +248,30 @@
         // Form validation
         const form = document.getElementById('helpdesk-form');
         form.addEventListener('submit', function(e) {
-            const kategori = document.getElementById('kategori').value;
-            const keutamaan = document.getElementById('keutamaan').value;
-            const subjek = document.getElementById('subjek').value.trim();
-            const penerangan = document.getElementById('penerangan').value.trim();
+            const category = document.getElementById('category').value;
+            const priority = document.getElementById('priority').value;
+            const subject = document.getElementById('subject').value.trim();
+            const description = document.getElementById('description').value.trim();
             const pengesahan = document.getElementById('pengesahan').checked;
             
-            if (!kategori || !keutamaan || !subjek || !penerangan || !pengesahan) {
+            if (!category || !priority || !subject || !description || !pengesahan) {
                 e.preventDefault();
                 alert('Sila lengkapkan semua medan yang diperlukan.');
                 return false;
             }
             
-            if (subjek.length < 10) {
+            if (subject.length < 10) {
                 e.preventDefault();
                 alert('Subjek mestilah sekurang-kurangnya 10 aksara.');
                 return false;
             }
             
-            if (penerangan.length < 20) {
+            if (description.length < 20) {
                 e.preventDefault();
                 alert('Penerangan mestilah sekurang-kurangnya 20 aksara.');
                 return false;
             }
         });
     });
-    
-    function removeFile(index) {
-        const fileInput = document.getElementById('lampiran');
-        const dt = new DataTransfer();
-        
-        Array.from(fileInput.files).forEach((file, i) => {
-            if (i !== index) {
-                dt.items.add(file);
-            }
-        });
-        
-        fileInput.files = dt.files;
-        fileInput.dispatchEvent(new Event('change'));
-    }
 </script>
 @endpush
