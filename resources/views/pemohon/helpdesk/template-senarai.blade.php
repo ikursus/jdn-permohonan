@@ -95,6 +95,7 @@
                         <tr>
                             <th>ID Tiket</th>
                             <th>Subjek</th>
+                            <td>Pengirim</th>
                             <th>Kategori</th>
                             <th>Status</th>
                             <th>Keutamaan</th>
@@ -109,6 +110,7 @@
                             <td>
                                 <strong class="text-primary">{{ $tiket->ticket_id }}</strong>
                             </td>
+                            <td>{{ $tiket->user->name }}</td>
                             <td>
                                 <a href="{{ route('pemohon.helpdesk.detail', $tiket->id) }}" 
                                    class="text-decoration-none fw-medium">

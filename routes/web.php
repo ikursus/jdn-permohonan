@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/helpdesk', [HelpdeskController::class, 'index'])->name('pemohon.helpdesk.senarai');
     Route::get('/helpdesk/baru', [HelpdeskController::class, 'create'])->name('pemohon.helpdesk.baru');
     Route::post('/helpdesk/baru', [HelpdeskController::class, 'store'])->name('pemohon.helpdesk.store');
-    Route::get('/helpdesk/{id}', [HelpdeskController::class, 'show'])->name('pemohon.helpdesk.detail');
+    Route::get('/helpdesk/{helpdesk}', [HelpdeskController::class, 'show'])->name('pemohon.helpdesk.detail');
     Route::post('/helpdesk/{id}/reply', [HelpdeskController::class, 'reply'])->name('pemohon.helpdesk.reply');
 });
 

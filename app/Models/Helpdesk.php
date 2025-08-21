@@ -24,12 +24,6 @@ class Helpdesk extends Model
     //     'id'
     // ];
 
-    protected $attributes = [
-        'category' => 'General',
-        'status' => 'Open',
-        'priority' => 'Low'
-    ];
-
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
@@ -48,4 +42,10 @@ class Helpdesk extends Model
         'High',
         'Urgent'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+        // return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

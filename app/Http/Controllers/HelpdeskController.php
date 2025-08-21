@@ -16,8 +16,7 @@ class HelpdeskController extends Controller
     {
         // $senaraiTickets = DB::table('helpdesk')->get();
         // $senaraiTickets = Helpdesk::all();
-        $senaraiTiket = Helpdesk::where('user_id', '=', auth()->id())->paginate(1);
-
+        $senaraiTiket = Helpdesk::where('user_id', '=', auth()->id())->paginate(10);
 
         return view('pemohon.helpdesk.template-senarai', compact('senaraiTiket'));
 
@@ -93,9 +92,17 @@ class HelpdeskController extends Controller
     /**
      * Display specific ticket
      */
-    public function show($id)
+    // public function show($id)
+    public function show(Helpdesk $helpdesk)
     {
-        return view('pemohon.helpdesk.template-detail', compact('id'));
+        // $helpdesk = Helpdesk::where('id', '=', $id)->first();
+        // $helpdesk = Helpdesk::where('id', '=', $id)->firstOrFail();
+        // $helpdesk = Helpdesk::where('id', '=', $id)->firstOrCreate(['ticket_id' => '1abc']);
+
+        // $helpdesk = Helpdesk::find($id);
+        // $helpdesk = Helpdesk::findOrFail($id);
+
+        return view('pemohon.helpdesk.template-detail', compact('helpdesk'));
     }
 
     /**

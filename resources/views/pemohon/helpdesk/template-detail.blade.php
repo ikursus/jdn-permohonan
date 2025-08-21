@@ -7,7 +7,6 @@
 @php
     // Data will be passed from controller
     // $helpdesk variable contains the ticket data
-@endphp
     
     $komunikasi = [
         [
@@ -76,22 +75,36 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
+                        <strong>Pengirim:</strong>
+                        <span>{{ $helpdesk->user->name }}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Emel Pengirim:</strong>
+                        <span>{{ $helpdesk->user->email }}</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         <strong>ID Tiket:</strong>
                         <span class="text-primary">#{{ $helpdesk->ticket_id }}</span>
                     </div>
                     <div class="col-md-6">
+                        <strong>Subjek:</strong>
+                        <span>{{ $helpdesk->subject }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         <strong>Kategori:</strong>
                         <span class="badge bg-secondary">{{ $helpdesk->category }}</span>
                     </div>
-                </div>
-                
-                <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Status:</strong>
                         @php
                             $statusClass = match($helpdesk->status) {
                                 'Open' => 'bg-warning',
-                                'In Progress' => 'bg-info',
+                                'In Progress' => 'bg-info', 
                                 'Resolved' => 'bg-success',
                                 'Closed' => 'bg-secondary',
                                 default => 'bg-secondary'
@@ -99,32 +112,28 @@
                         @endphp
                         <span class="badge {{ $statusClass }}">{{ $helpdesk->status }}</span>
                     </div>
+                </div>
+
+                <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Keutamaan:</strong>
                         @php
                             $priorityClass = match($helpdesk->priority) {
                                 'High' => 'text-danger',
                                 'Medium' => 'text-warning',
-                                'Low' => 'text-success',
+                                'Low' => 'text-success', 
                                 'Urgent' => 'text-danger fw-bold',
                                 default => 'text-secondary'
                             };
                         @endphp
                         <span class="{{ $priorityClass }} text-capitalize fw-medium">{{ $helpdesk->priority }}</span>
                     </div>
-                </div>
-                
-                <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Tarikh Dibuat:</strong>
-                        <span>{{ $helpdesk->created_at->format('d/m/Y H:i') }}</span>
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Kemaskini Terakhir:</strong>
-                        <span>{{ $helpdesk->updated_at->format('d/m/Y H:i') }}</span>
+                        <span>{{ $helpdesk->created_at }}</span>
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <strong>Penerangan Masalah:</strong>
                     <div class="mt-2 p-3 bg-light rounded">
@@ -323,7 +332,7 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="reply-form" method="POST" action="{{ route('pemohon.helpdesk.reply', $helpdesk->ticket_id) }}" enctype="multipart/form-data">
+            <form id="reply-form" method="POST" action="" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
