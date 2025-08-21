@@ -55,16 +55,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/helpdesk/{id}/reply', [HelpdeskController::class, 'reply'])->name('pemohon.helpdesk.reply');
 });
 
+// Route::name();
+
 // Admin Routes (Authenticated admin users only)
 Route::group([
     'prefix' => 'admin',
-    'middleware' => ['auth']
+    'middleware' => ['auth'],
+    'as' => 'admin.'
 ], function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::resource('/users', UserController::class);
-    Route::get('/pemohon', [AdminController::class, 'pemohon'])->name('admin.pemohon');
-    Route::get('/permohonan', [AdminController::class, 'permohonan'])->name('admin.permohonan');
-    Route::get('/helpdesk', [AdminController::class, 'helpdesk'])->name('admin.helpdesk');
+    Route::get('/pemohon', [AdminController::class, 'pemohon'])->name('pemohon');
+    Route::get('/permohonan', [AdminController::class, 'permohonan'])->name('permohonan');
+    Route::get('/helpdesk', [AdminController::class, 'helpdesk'])->name('helpdesk');
 });
 
 // Test

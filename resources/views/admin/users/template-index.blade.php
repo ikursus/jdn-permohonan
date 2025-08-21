@@ -27,7 +27,7 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->phone }}</td>
                     <td>
-                        <a href="#" class="btn btn-info">Kemaskini</a>
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-info">Kemaskini</a>
                         <a href="#" class="btn btn-danger">Padam</a>
                     </td>
                 </tr>

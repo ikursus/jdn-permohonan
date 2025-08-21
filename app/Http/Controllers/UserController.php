@@ -48,7 +48,15 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Dapatkan data user berdasarkan id
+        $user = DB::table('users')->where('id', $id)->first(); // LIMIT 1
+
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'User tidak ditemui');
+        }
+
+        // Kembalikan view dan passing data user
+        return view('admin.users.template-edit', compact('user'));
     }
 
     /**
