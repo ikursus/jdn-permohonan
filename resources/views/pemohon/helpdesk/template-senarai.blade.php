@@ -87,12 +87,8 @@
         </div>
     </div>
     <div class="card-body">
-        @php
-            // Data will be passed from controller
-            $senaraiTiket = $helpdesks ?? [];
-        @endphp
         
-        @if(count($senaraiTiket) > 0)
+        @if($senaraiTiket)
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead class="table-light">
@@ -192,25 +188,7 @@
             </div>
             
             <!-- Pagination -->
-            <nav aria-label="Pagination">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <span class="page-link">Sebelumnya</span>
-                    </li>
-                    <li class="page-item active">
-                        <span class="page-link">1</span>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Seterusnya</a>
-                    </li>
-                </ul>
-            </nav>
+            {{ $senaraiTiket->links() }}
         @else
             <div class="text-center py-5">
                 <i class="bi bi-ticket-perforated text-muted" style="font-size: 4rem;"></i>

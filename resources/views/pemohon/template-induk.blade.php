@@ -333,21 +333,8 @@
                                 Baru
                             </a>
                         </div>
-                        <div class="nav-item">
-                            <a href="#" class="nav-link py-2">
-                                <i class="bi bi-clock-history"></i>
-                                Riwayat
-                            </a>
-                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="nav-item">
-                <a href="" class="nav-link {{ request()->routeIs('pemohon.dokumen.*') ? 'active' : '' }}">
-                    <i class="bi bi-folder"></i>
-                    Dokumen
-                </a>
             </div>
             
             <div class="nav-item">
@@ -363,13 +350,6 @@
                 <a href="{{ route('pemohon.helpdesk.senarai') }}" class="nav-link {{ request()->routeIs('pemohon.helpdesk.*') ? 'active' : '' }}">
                     <i class="bi bi-headset"></i>
                     Helpdesk
-                </a>
-            </div>
-            
-            <div class="nav-item">
-                <a href="#" class="nav-link {{ request()->routeIs('pemohon.bantuan') ? 'active' : '' }}">
-                    <i class="bi bi-question-circle"></i>
-                    Bantuan
                 </a>
             </div>
             

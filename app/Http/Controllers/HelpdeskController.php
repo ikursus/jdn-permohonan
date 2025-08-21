@@ -14,10 +14,13 @@ class HelpdeskController extends Controller
      */
     public function index()
     {
+        // $senaraiTickets = DB::table('helpdesk')->get();
+        // $senaraiTickets = Helpdesk::all();
+        $senaraiTiket = Helpdesk::where('user_id', '=', auth()->id())->paginate(1);
 
-        $senaraiTickets = Helpdesk::all();
 
-        return view('pemohon.helpdesk.template-senarai');
+        return view('pemohon.helpdesk.template-senarai', compact('senaraiTiket'));
+
     }
 
     /**
